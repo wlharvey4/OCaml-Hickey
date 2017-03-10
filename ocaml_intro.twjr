@@ -1,0 +1,475 @@
+\input texinfo		@c -*- texinfo -*-
+@c %**start of header
+@setfilename ocaml_intro.texi
+@settitle Introduction to Objective Caml
+@set AUTHOR Jason Hickey
+@set PUBLISHED 03/2017
+@set EDITION 0.2
+@set UPDATED 2017-03-09
+@c %**end of header
+
+@copying
+Introduction to Objective Caml, by @value{AUTHOR} --- Outline and
+Exercises for, by LOLH, edition @value{EDITION}, updated
+@value{UPDATED}.
+
+Copyright @copyright{} @value{PUBLISHED}
+@end copying
+
+@titlepage
+@title Introduction to Objective Caml
+@subtitle Written by Jason Hickey (2008)
+@subtitle Outline and Exercises
+@subtitle Edition @value{EDITION}, last updated @value{UPDATED}
+@author LOLH @copyright{} @value{PUBLISHED}
+@end titlepage
+
+@contents
+
+@ifnottex
+@node Top
+@top Intro to OCaml
+
+An outline and exercises for Introduction to Objective Caml by
+@value{AUTHOR} (2008).
+@end ifnottex
+
+@menu
+* Preface::
+* Introduction::
+* Chapter 11 Files ---- Compilation Units --- Programs::
+* Chapter 14 Objects::
+* References::
+* Index::
+
+@detailmenu
+ --- The Detailed Node Listing ---
+
+Introduction
+
+* Features::
+* Functional versus Imperative Languages::
+
+Functional versus Imperative Languages
+
+* Comparison using Euclid's Algorithm::
+* Imperative Program::
+* Functional Program::
+* Problems with Pure Functional Programs::
+* Intermediate Approach::
+
+Comparison using Euclid's Algorithm
+
+* Introductions::
+* C Function Definition::
+* Variables and Bindings::
+* Looping and Recursion::
+* Change in State::
+* Return from C::
+
+References
+
+* OCaml Home::
+* OCaml Reference Manual::
+
+@end detailmenu
+@end menu
+
+@node Preface
+@unnumbered Preface
+@cindex about OCaml
+@cindex about this book
+@cindex topics, this book
+
+Objective Caml (OCaml) is a popular, expressive, high-performance
+dialect of ML developed by a research team at INRIA in France. This book
+presents a practical introduction and guide to the language, with
+topics ranging from how to write a program to the concepts and
+conventions that affect how affect how programs are developed in OCaml.
+
+The text can be divided into three main parts.
+
+@itemize
+@item The core language (Chapters 2–10).
+@item The module system (Chapters 11–13).
+@item Objects and class (Chapters 14–17).
+@end itemize
+
+This book is intended for programmers, undergraduate and beginning
+graduate students with some experience programming in a procedural
+programming language like C or Java, or in some other functional
+programming language. Some knowledge of basic data structures like
+lists, stacks, and trees is assumed as well.
+
+@cindex source of book
+
+This book grew out of set of notes I developed for Caltech CS134, an
+undergraduate course in compiler construction that I started teaching in
+2000.
+
+@part Part I:@* The Core Language
+
+@node Introduction
+@chapter Introduction
+@cindex ML programming, introduction to
+@cindex @abbr{INRIA}
+@cindex dialect of ML
+@cindex ML, @emph{meta-language}
+@cindex Milner, Robin
+@cindex @emph{Logic of Computable Functions}
+@cindex theorem prover
+
+This book is an introduction to ML programming, specifically for the
+Objective Caml (@command{OCaml}) programming language from @abbr{INRIA}.
+OCaml is a dialect of the ML (@emph{Meta-Language}) family of languages,
+which derive from the Classic ML language designed by Robin Milner in
+1975 for the LCF (@emph{Logic of Computable Functions}) theorem prover.
+
+@menu
+* Features::
+* Functional versus Imperative Languages::
+@end menu
+
+@node Features
+@section Featrues
+@cindex features of ocaml
+@cindex features, new in ocaml
+
+OCaml shares many features with other dialects of ML, and it provides
+several new features of its own.  Throughout this document, we use the
+term @abbr{ML} to stand for any of the dialects of @abbr{ML}, and
+@abbr{OCaml} when a feature is specific to OCaml.
+
+@cindex functional language
+@cindex typed strongly
+@cindex strongly typed
+@cindex type inference
+@cindex polymorphic
+@cindex pattern matching
+@cindex module system
+@cindex object system
+@cindex semantics, formal
+@cindex mathematical interpretation
+
+@table @b
+@item Functional
+ML is a functional language, meaning that functions are treated as
+first-class values. Functions may be nested, functions may be passed as
+arguments to other functions, and functions can be stored in data
+structures. Functions are treated like their mathematical counterparts
+as much as possible. Assignment statements that permanently change the
+value of certain expressions are permitted, but used much less
+frequently than in languages like C or Java.
+@item Strongly typed
+ML is strongly typed, meaning that the type of every variable and every
+expression in a program is determined at compile-time. Programs that
+pass the type checker are safe: they will never “go wrong” because of an
+illegal instruction or memory fault.
+@item Type Inference
+ML uses type inference to infer types for the expressions in a
+program. Even though the language is strongly typed, it is rare that the
+programmer has to annotate a program with type constraints.
+@item Polymorphic
+The ML type system is polymorphic, meaning that it is possible to write
+programs that work for values of any type. For example, it is
+straightforward to define generic data structures like lists, stacks,
+and trees that can contain ele- ments of any type. In a language without
+polymorphism, the programmer would either have to write different
+implementations for each type (say, lists of integers vs. lists of
+floating-point values), or else use explicit coercions to bypass the
+type system.
+@item Pattern Matching
+ML implements a pattern matching mechanism that unifies case analysis
+and data destructors.
+@item Module System
+ML includes an expressive module sytem that allows data structures to be
+specified and defined @emph{abstractly}. The module system includes
+@emph{functors}, which are are functions over modules that can be used
+to produce one data structure from another.
+@item Object System
+OCaml is also the only widely-available ML implementation to include an
+object system. The module system and object system complement one
+another: the module system provides data abstraction, and the object
+system provides inheritance and re-use.
+@cindex development process, separate compilation, compilers
+@cindex separate compilation, two compilers
+@cindex compilers, two types: byte-code, native-code
+@cindex byte-code interpreter
+@cindex native-code compiler
+@item Separate Compilation
+OCaml includes a compiler that supports separate compilation. This makes
+the development process easier by reducing the amount of code that must
+be recompiled when a program is modified. OCaml actually includes two
+compilers: a @emph{byte-code} compiler that produces code for the
+portable OCaml byte-code interpreter, and a @emph{native-code} compiler
+that produces efficient code for many machine architectures.
+@item Formal Semantics
+All the languages in the ML family have a formal semantics, which means
+that programs have a mathematical interpretation, making the programming
+language easier to understand and explain.
+@end table
+
+@node Functional versus Imperative Languages
+@section Functional versus Imperative Languages
+@cindex functional versus imperative
+@cindex imperative, assignment and side-effects
+
+The ML languages are @emph{mostly functional}, meaning that the normal
+programming style is functional, but the language includes @emph{assignment}
+and @emph{side-effects}.
+
+To compare ML with an imperative language, a comparison of two simple
+implementations of Euclid’s algorithm is presented, one in C, and the
+other in OCaml.  Euclid’s algorithm computes the greatest common divisor
+of two nonnegative integers.
+
+@menu
+* Comparison using Euclid's Algorithm::
+* Imperative Program::
+* Functional Program::
+* Problems with Pure Functional Programs::
+* Intermediate Approach::
+@end menu
+
+@node Comparison using Euclid's Algorithm
+@subsection Comparison using Euclid's Algorithm
+@cindex Euclid's algorithm
+
+@(Euclid.c@) =
+@<C Introduction@>
+@<C Function Definition@>
+@<Remainder Variable Definition@>
+@<C While Loop@>
+@<C Return@>
+@
+
+@(Euclid.ml@) =
+@<OCaml Introduction@>
+@<Function Prototype@>
+@<Let Binding@>
+@<Pattern Match with Recursion or Return@>
+@
+
+@menu
+* Introductions::
+* C Function Definition::
+* Variables and Bindings::
+* Looping and Recursion::
+* Change in State::
+* Return from C::
+@end menu
+
+@node Introductions
+@subsubsection Introductions
+@cindex Euclid's Algorithm, Introduction
+
+@<C Introduction@> =
+/* A C function to
+ * determine the greatest
+ * common divisor of two
+ * positive numbers a and b
+ * We assume a > b.
+ */
+@
+
+@<OCaml Introduction@> =
+(*
+ * An OCaml function to
+ * determine the greatest
+ * common divisor of two
+ * positive numbers $a$ and $b$.
+ * We assume $a > b$.
+ *)
+@
+
+@node C Function Definition
+@subsubsection C Function Definition
+@cindex Euclid's Algorithm, C Function Definition
+
+The C function is named @code{gcd(int a, int b)} and contains two
+parameters, @var{a} and @var{b}.  These two parameter variables' state
+will be changed continuously inside the routine.
+
+@<C Function Definition@> =
+int gcd(int a, int b) {
+@
+
+The OCaml function is named @code{gcd a b}; @var{a} and @var{b} are its
+parameters; their type is inferred by the type system as integers
+because of how they are used inside the function.  The @code{rec}
+keyword insures that the function definition is a part of the
+environment so the function can call itself recursively.
+
+@<Function Prototype@>=
+let rec gcd a b =
+@
+
+@node Variables and Bindings
+@subsubsection Variables and Bindings
+@cindex Euclid's Algorithm, variables
+@cindex Eudlid's Algorithm, bindings
+
+The variable @var{r} is defined prior to starting the loop; its state
+will also change in every loop, and will eventually be zero, at which
+point the parameter @var{b}'s value will be returned, which will have
+changed from its original value.
+
+@<Remainder Variable Definition@> =
+int r;
+         
+@
+
+In OCaml, the remainder value of @var{a} divided by @var{b} is calculated and
+bound to the identifier @var{r}.  No state is changed.
+
+@<Let Binding@> =
+let r = a mod b in
+@
+
+@node Looping and Recursion
+@subsubsection Looping and Recursion
+@cindex Euclid's Algorithm, looping
+@cindex Eudlid's Algorithm, recursion
+
+Two things happen in the C @code{while} loop:
+
+@enumerate
+@item
+the remainder of @var{a} divided by @var{b} is calculated and placed
+inside @var{r};
+@item
+the new value of @var{r} is checked to see if it is zero; the loop stops
+if it is, or continues if it is not.
+@end enumerate
+
+@<C While Loop@> =
+while((r = a % b) != 0) {
+@<State change in imperative program@>
+}
+@
+
+Two things happen in the body of the OCaml code:
+
+@enumerate
+@item
+@var{r} is checked to see if it is zero; if it is, the value of @var{b}
+is returned;
+@item
+if it is not, then the function @code{gcd b r} is called; no state is
+changed; 
+@end enumerate
+
+@<Pattern Match with Recursion or Return@> =
+  if r = 0
+  then b
+  else gcd b r
+@
+
+@node Change in State
+@subsubsection Change in State
+@cindex state, change in
+
+@var{a} and @var{b} are parameter variables; their state is changed
+continuously inside the loop.
+
+@<State change in imperative program@> =
+    a = b;
+    b = r;
+@
+
+@node Return from C
+@subsubsection Return
+@cindex Euclid's Algorithm, return
+
+The modified state variable @var{b} is returned.
+
+@<C Return@> =
+        return b;
+@
+
+@node Imperative Program
+@subsection Imperative Program
+@cindex state of program, reasoning about
+@cindex loop algorithm, imperative program
+
+In a language like C, the algorithm is normally implemented as a loop,
+and progress is made by modifying the state. Reasoning about this
+program requires that we reason about the program state: give an
+invariant for the loop, and show that the state makes progress on each
+step toward the goal.
+
+@node Functional Program
+@subsection Functional Program
+
+@cindex recursion algorithm
+@cindex lack of side effects, functional programs
+@cindex side effects, lack of, functional programs
+@cindex data structures, persistent, functional programs
+
+In OCaml, Euclid’s algorithm is normally implemented using
+recursion. The steps are the same, but there are no side-effects.  In
+ML, programs rarely use assignment or side-effects except for I/O. Pure
+functional programs have some nice properties: one is that data
+structures are persistent, which means that no data structure is ever
+destroyed.
+
+@node Problems with Pure Functional Programs
+@subsection Problems with Pure Functional Programs
+@cindex functional programming, problems
+@cindex threading the state
+
+There are problems with taking too strong a stance in favor of pure
+functional programming. One is that every updatable data structure has
+to be passed as an argument to every function that uses it (this is
+called @emph{threading the state}). This can make the code obscure if
+there are too many of these data structures.
+
+@node Intermediate Approach
+@subsection Intermediate Approach
+@cindex compromise between pure functional and imperative
+
+We take an intermediate approach. We use imperative code when necessary,
+but we encourage the use of pure functional approach whenever
+appropriate.
+
+
+@part Part II:@* The Module System
+
+@node Chapter 11 Files ---- Compilation Units --- Programs
+@chapter Files, Compilation Units, and Programs
+
+@part Part III:@* Objects and Classes
+
+@node Chapter 14 Objects
+@chapter Objects
+
+@part IV:@* Appendices
+
+@node References
+@appendix References
+
+@menu
+* OCaml Home::
+* OCaml Reference Manual::
+@end menu
+
+@node OCaml Home
+@appendixsec The OCaml Home Webpage
+@cindex home webpage, OCaml
+@cindex webpage, home, OCaml
+
+@uref{http://www.ocaml.org, The OCaml Home Page}
+
+@node OCaml Reference Manual
+@appendixsec The OCaml Reference Manual
+@cindex reference manual, OCaml
+
+@uref{http://caml.inria.fr/pub/docs/manual-ocaml/, The Ocaml Reference
+Manual}
+
+@node Index
+@unnumbered Index
+
+@printindex cp
+
+@bye
