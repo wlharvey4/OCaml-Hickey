@@ -1,6 +1,6 @@
 \input texinfo		@c -*- texinfo -*-
 @c %**start of header
-@setfilename ocaml_intro.texi
+@setfilename ocaml_intro.info
 @settitle Introduction to Objective Caml
 @set AUTHOR Jason Hickey
 @set PUBLISHED 03/2017
@@ -37,6 +37,7 @@ An outline and exercises for Introduction to Objective Caml by
 @menu
 * Preface::
 * Introduction::
+* Ch 2 Simple Expressions::
 * Chapter 11 Files ---- Compilation Units --- Programs::
 * Chapter 14 Objects::
 * References::
@@ -49,6 +50,7 @@ Introduction
 
 * Features::
 * Functional versus Imperative Languages::
+* Organization::
 
 Functional versus Imperative Languages
 
@@ -66,6 +68,16 @@ Comparison using Euclid's Algorithm
 * Looping and Recursion::
 * Change in State::
 * Return from C::
+
+OCaml Toploop
+
+* Comments::
+* Basic Expressions::
+
+Primitive Types
+
+* @code{unit}: The Singleton::
+* @code{int}: The Integers::
 
 References
 
@@ -128,6 +140,7 @@ which derive from the Classic ML language designed by Robin Milner in
 @menu
 * Features::
 * Functional versus Imperative Languages::
+* Organization::
 @end menu
 
 @node Features
@@ -432,6 +445,112 @@ We take an intermediate approach. We use imperative code when necessary,
 but we encourage the use of pure functional approach whenever
 appropriate.
 
+@node Organization
+@section Organization
+@cindex organization of the book
+@cindex user guide
+
+The book is organized as a @emph{user guide} to programming in OCaml.
+It is not a reference manual.
+
+@node Ch 2 Simple Expressions
+@chapter Simple Expressions
+@cindex chapter 2, simple expressions
+@cindex expressions, simple, chapter 2
+
+Most functional programming implementations include:
+
+@itemize
+@item a runtime environment
+@item a standard library
+@item garbage collector
+@item a toploop (an evaluator that can be used to interact with the
+system)
+@end itemize
+
+OCaml provides:
+
+@itemize
+@item a compiler
+@item a runtime
+@item a toploop (called @command{ocaml})
+@end itemize
+
+@subheading OCaml Toploop
+
+The toploop prints a prompt (#), reads an input expression, evaluates
+it,and prints the result.  Expressions in the toploop are terminated by
+a double-semicolon `;;'.  The toploop prints the @emph{type} of the
+result and its @emph{value}.
+
+@menu
+* Comments::
+* Basic Expressions::
+@end menu
+
+@node Comments
+@section Comment Convention
+@cindex comments
+
+In OCaml, comments are enclosed in matching @verb{|(* and *)|}
+pairs. Comments may be nested, and the comment is treated as white
+space.
+
+@node Basic Expressions
+@section Basic Expressions
+@cindex expressions, basic
+@cindex types
+@cindex type inference
+@cindex strongly typed
+@cindex typed, strongly
+
+@subheading Types and Type Inference
+OCaml is a @emph{strongly typed} language. In OCaml every valid
+expression must have a @emph{type}, and expressions of one type may not
+be used as expressions in another type.  There are no implicit
+coercions.  OCaml uses @emph{type inference} to figure out the types for
+you.
+
+@cindex types, primitive
+@cindex primitive types
+@subheading Primitive Types
+The primitive types are:
+
+@itemize
+@item unit
+@item int
+@item char
+@item float
+@item bool
+@item string
+@end itemize
+
+@menu
+* @code{unit}: The Singleton::
+* @code{int}: The Integers::
+@end menu
+
+@node @code{unit}: The Singleton
+@subsection @code{unit}: The Singleton
+@cindex unit
+@cindex singleton
+
+The simplest type in OCaml is the @code{unit} type, which contains one element:
+@verb{|()|}.
+
+@node @code{int}: The Integers
+@subsection @code{int}: The Integers
+@cindex int
+@cindex integers
+@cindex integers, precision
+
+The type @code{int} is the type of signed integers:
+@verb{|..., -2, -1, 0, 1, 2, ...|}
+
+The precision is finite. Integer values are represented by a machine
+word, minus one bit that is reserved for use by the runtime (for garbage
+collection), so on a 32-bit machine architecture, the precision is 31
+bits, and on a 64-bit architecture, the precision is 63 bits.
 
 @part Part II:@* The Module System
 
